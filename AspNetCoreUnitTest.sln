@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30523.141
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCoreUnitTest.APP", "AspNetCoreUnitTest.APP\AspNetCoreUnitTest.APP.csproj", "{99E22D44-BB0C-44D3-AA08-A1A51168196B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCoreUnitTest.Test", "AspNetCoreUnitTest.Test\AspNetCoreUnitTest.Test.csproj", "{8804FB4D-0FBE-4B75-AF4B-915698A76E00}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{99E22D44-BB0C-44D3-AA08-A1A51168196B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99E22D44-BB0C-44D3-AA08-A1A51168196B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99E22D44-BB0C-44D3-AA08-A1A51168196B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99E22D44-BB0C-44D3-AA08-A1A51168196B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8804FB4D-0FBE-4B75-AF4B-915698A76E00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8804FB4D-0FBE-4B75-AF4B-915698A76E00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8804FB4D-0FBE-4B75-AF4B-915698A76E00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8804FB4D-0FBE-4B75-AF4B-915698A76E00}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {95527401-6510-4A45-9C4C-E9B30D42BEA6}
+	EndGlobalSection
+EndGlobal
