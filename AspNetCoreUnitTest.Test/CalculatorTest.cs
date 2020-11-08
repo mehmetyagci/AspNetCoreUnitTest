@@ -18,7 +18,7 @@ namespace AspNetCoreUnitTest.Test
             var calculator = new Calculator();
 
             // Act -> 
-            var total = calculator.add(a, b);
+            var total = calculator.Add(a, b);
 
             // Assert -> doğrulama evresi
             Assert.Equal<int>(25, total);
