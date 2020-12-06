@@ -6,9 +6,14 @@ namespace AspNetCoreUnitTest.APP
 {
     public class Calculator
     {
-
         public int Add(int a, int b)
         {
+            // https://www.calculator.com/add/2/3 ortalama her bir istek 5 sn. sürüyor
+            if(a == 0 || b == 0)
+            {
+                return 0;
+            }
+
             return a + b;
         }
     }

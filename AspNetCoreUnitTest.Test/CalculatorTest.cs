@@ -8,6 +8,11 @@ namespace AspNetCoreUnitTest.Test
 {
     public class CalculatorTest
     {
+        public Calculator _calculator { get; set; }
+        public CalculatorTest()
+        {
+            _calculator = new Calculator();
+        }
 
         [Fact]
         public void AddTest()
@@ -15,13 +20,34 @@ namespace AspNetCoreUnitTest.Test
             // Arrange -> değişlenlerin initialize edildiği yerdir
             int a = 5;
             int b = 20;
-            var calculator = new Calculator();
 
             // Act -> 
-            var total = calculator.Add(a, b);
+            var total = _calculator.Add(a, b);
 
             // Assert -> doğrulama evresi
             Assert.Equal<int>(25, total);
+        }
+
+        [Theory]
+        [InlineData(2, 5, 7)]
+        [InlineData(10, 2, 12)]
+        [InlineData(-3, 15, 12)]
+        public void Add_simpleValues_ReturnTotalValue(int a, int b, int expectedTotal)
+        {
+
+            var actualTotal = _calculator.Add(a, b);
+
+            Assert.Equal<int>(actualTotal, expectedTotal);
+        }
+
+        [Theory]
+        [InlineData(0, 5, 0)]
+        [InlineData(-3, 0, 0)]
+        public void Add_zeroValues_ReturnZeroValue(int a, int b, int expectedTotal)
+        {
+            var actualTotal = _calculator.Add(a, b);
+
+            Assert.Equal<int>(actualTotal, expectedTotal);
         }
 
 
@@ -118,7 +144,7 @@ namespace AspNetCoreUnitTest.Test
         [Fact]
         public void AssertNotInRange()
         {
-            Assert.NotInRange(30,2,20);
+            Assert.NotInRange(30, 2, 20);
         }
 
         [Fact]
@@ -172,13 +198,13 @@ namespace AspNetCoreUnitTest.Test
         [Fact]
         public void AssertEqual()
         {
-            Assert.Equal(2,2);
+            Assert.Equal(2, 2);
         }
 
         [Fact]
         public void AssertNotEqual()
         {
-            Assert.NotEqual(2,5);
+            Assert.NotEqual(2, 5);
         }
     }
 }
