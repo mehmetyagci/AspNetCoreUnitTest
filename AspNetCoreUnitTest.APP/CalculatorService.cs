@@ -17,8 +17,12 @@ namespace AspNetCoreUnitTest.APP
             return a + b;
         }
 
-        public int multiply(int a ,int b)
+        public int multiply(int a, int b)
         {
+            if (a == 0)
+            {
+                throw new Exception("a=0 olamaz");
+            }
             return a * b;
         }
 
