@@ -31,7 +31,8 @@ namespace UdemyRealWorldUnitTest.Web.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                // return NotFound(); Test'te farklı senaryo olsun diye RedirectToAction("Index") yapıyoruz.
+                return RedirectToAction("Index");
             }
 
             var product = await _repository.GetById(id.Value);
