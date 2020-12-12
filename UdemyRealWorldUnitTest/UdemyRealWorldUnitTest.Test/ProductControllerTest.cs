@@ -25,7 +25,9 @@ namespace UdemyRealWorldUnitTest.Test
 
         public ProductControllerTest()
         {
-            _mockRepo = new Mock<IRepository<Product>>();
+            // MockBehavior.Strict ilgili dependency 'lerin hepsini Mock lamak için: 
+            // MockBehavior.Loose gevşek, ilgili dependency 'yi illede yazmama gerek yok.
+            _mockRepo = new Mock<IRepository<Product>>(MockBehavior.Loose);
             _productsController = new ProductsController(_mockRepo.Object);
 
             products = new List<Product>
@@ -148,5 +150,82 @@ namespace UdemyRealWorldUnitTest.Test
 
 
         #endregion Detail Testleri
+
+        #region Create Testleri
+
+        /// <summary>
+        ///  Create Get metodunun testi
+        ///  Dönen değer ViewResult mi bakıyoruz sadece.
+        /// </summary>
+        [Fact]
+        public  void Create_ActionExecutes_ReturnView()
+        {
+            var result = _productsController.Create();
+            Assert.IsType<ViewResult>(result);
+        }
+
+        /// <summary>
+        /// 40. Create[POST] methodunun test edilmesi-2
+        /// Post metodunun Invalid Model testi
+        /// </summary>
+        [Fact]
+        public async void CreatePOST_InValidModelState_ReturnView()
+        {
+            _productsController.ModelState.AddModelError("Name", "Name alanı gereklidir");
+
+            var result = await _productsController.Create(products.First());
+
+            var viewResult = Assert.IsType<ViewResult>(result);
+
+            Assert.IsType<Product>(viewResult.Model);
+        }
+
+
+        /// <summary>
+        /// 41. Create[POST] methodunun test edilmesi-3
+        /// Post metodunun Model Valid ise Index 'e yönleniyor mu? 
+        /// </summary>
+        [Fact]
+        public async void CreatePOST_ValidModelState_ReturnRedirectToIndexAction()
+        {
+            var result = await _productsController.Create(products.First());
+
+            var redirect = Assert.IsType<RedirectToActionResult>(result);
+
+            Assert.Equal("Index", redirect.ActionName);
+        }
+
+        //42. Create[POST] methodunun test edilmesi-4
+        // Post metodunda Model Valid ise Product Create oluyor mu?
+        [Fact]
+        public async void CreatePOST_ValidModelState_CreateMethodExecute()
+        {
+            Product newProduct = null;
+
+            _mockRepo.Setup(repo => repo.Create(It.IsAny<Product>()))
+                    .Callback<Product>(x => newProduct = x);
+
+            var result = await _productsController.Create(products.First());
+
+            _mockRepo.Verify(repo => repo.Create(It.IsAny<Product>()),
+                Times.Once);
+
+            Assert.Equal(products.First().Id, newProduct.Id);
+        }
+
+
+        // 43. Create[POST] methodunun test edilmesi-5
+        // Post Create 'e ModelState 'i geçerli olmayan bir Product gönderilince repository.Create() metodunun çalışmaması lazım.
+        [Fact]
+        public async void CreatePOST_InValidModelState_NeverCreateExecute()
+        {
+            _productsController.ModelState.AddModelError("Name", "Hata var gardaş!!!");
+
+            var result = await _productsController.Create(products.First());
+            //
+            _mockRepo.Verify(repo => repo.Create(It.IsAny<Product>()), Times.Never);
+        }
+
+        #endregion Create Testleri
     }
 }
