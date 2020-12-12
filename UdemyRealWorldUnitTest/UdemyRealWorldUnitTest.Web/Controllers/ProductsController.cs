@@ -70,7 +70,7 @@ namespace UdemyRealWorldUnitTest.Web.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("Index"); // return NotFound();
             }
 
             var product = await _repository.GetById(id.Value);

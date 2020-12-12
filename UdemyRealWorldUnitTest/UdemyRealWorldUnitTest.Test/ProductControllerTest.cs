@@ -158,7 +158,7 @@ namespace UdemyRealWorldUnitTest.Test
         ///  Dönen değer ViewResult mi bakıyoruz sadece.
         /// </summary>
         [Fact]
-        public  void Create_ActionExecutes_ReturnView()
+        public void Create_ActionExecutes_ReturnView()
         {
             var result = _productsController.Create();
             Assert.IsType<ViewResult>(result);
@@ -227,5 +227,154 @@ namespace UdemyRealWorldUnitTest.Test
         }
 
         #endregion Create Testleri
+
+        #region Edit Testleri
+
+        #region Edit Get metod testleri
+        // 44. Edit methodunun test edilmesi-1
+        // Edit get metodunun test edilmesi.  id null gönderince
+        [Fact]
+        public async void Edit_IdIsNull_ReturnRedirectToIndexAction()
+        {
+            var result = await _productsController.Edit(null);
+
+            // test 1 dönen tip RedirectToActionResult mi?
+            var redirect = Assert.IsType<RedirectToActionResult>(result);
+
+            // test 2 Index 'emi redirect oldu?
+            Assert.Equal("Index", redirect.ActionName);
+
+        }
+
+        // 45. Edit methodunun test edilmesi-2
+        // Edit get metodunun test edilmesi.  product == null ise NotFound dönmesi lazım.
+        [Theory]
+        [InlineData(3)] // olmayan data veriyoruz
+        public async void Edit_IdInValid_ReturnNotFound(int productId)
+        {
+            Product product = null;
+            // ProductsController 'daki Edit get metodunun içerisindeki GetById mock-kandırıyoruz. product=null dönmüş gibi
+            _mockRepo.Setup(x => x.GetById(productId)).ReturnsAsync(product);
+
+            // Metodu çağırıyorum
+            var result = await _productsController.Edit(productId);
+
+            // test 1. dönen tip NotFoundResult 'mi?
+            var redirect = Assert.IsType<NotFoundResult>(result);
+
+            // test 2. statuscode 404 mu? Bunu yazmaya gerek yok!!! NotFoundResult 404 demek zaten.
+            Assert.Equal(404, redirect.StatusCode);
+        }
+
+        // 46. Edit methodunun test edilmesi-3
+        // Edit get metodunun test edilmesi.  product dolu iken return View(product) dönmesi lazım.
+        [Theory]
+        [InlineData(2)] // 
+        public async void Edit_ActionExecutes_ReturnProduct(int productId)
+        {
+            Product product = products.First(x => x.Id == productId);
+            // ProductsController 'daki Edit get metodunun içerisindeki GetById mock-kandırıyoruz. product getById ile bulunmuş gibi dönmüş gibi
+            _mockRepo.Setup(x => x.GetById(productId)).ReturnsAsync(product);
+
+            // Metodu çağırıyorum
+            var result = await _productsController.Edit(productId);
+
+            // test 1. dönen tip ViewResult 'mi?
+            var viewResult = Assert.IsType<ViewResult>(result);
+
+            // test 2.  viewResult Model tipi Product mi?
+            var resultProduct = Assert.IsAssignableFrom<Product>(viewResult.Model);
+
+            // test 3. dönen resultProduct 'in değerlerini karşılaştırıyoruz.
+            Assert.Equal(product.Id, resultProduct.Id);
+            Assert.Equal(product.Name, resultProduct.Name);
+
+        }
+        #endregion Edit Get metod testleri
+
+
+        #region Edit Post Testleri
+
+        /// <summary>
+        /// 47. Edit[POST] methodunun test edilmesi-4
+        /// </summary>
+        /// <param name="productId"></param>
+        [Theory]
+        [InlineData(1)]
+        public void EditPOST_IdIsNotEqualProduct_ReturnNotFound(int productId)
+        {
+
+            var result = _productsController.Edit(2, products.First(x => x.Id == productId));
+
+            var redirect = Assert.IsType<NotFoundResult>(result);
+
+            // 404 testine gerek yok.
+        }
+
+
+        /// <summary>
+        /// 48. Edit[POST] methodunun test edilmesi-5
+        /// ModelState IsValid değilse testi
+        /// Geriye return View(product) dönmeli.
+        /// </summary>
+        /// <param name="productId"></param>
+        [Theory]
+        [InlineData(1)]
+        public void EditPOST_InvalidModelState_ReturnView(int productId)
+        {
+            // ModelState 'e bir hata ekliyorum.
+            _productsController.ModelState.AddModelError("Name", "");
+
+            var result = _productsController.Edit(1, products.First(x => x.Id == productId));
+
+            // test1 dönen tip viewresult mi?
+            var viewResult = Assert.IsType<ViewResult>(result);
+
+            // test2 dönen viewresult in içerisindeli Model in tipi Product mi?
+            Assert.IsType<Product>(viewResult.Model);
+        }
+
+        /// <summary>
+        /// 49. Edit[POST] methodunun test edilmesi-6
+        /// ModelState Valid ise Index sayfasına redirect oluyor mu testi?
+        /// _mock yapmıycaz. Update işlemini test etmiyorum sadece Update'ten sonra Index 'e redirect oluyor mu?
+        /// </summary>
+        /// <param name="productId"></param>
+        [Theory]
+        [InlineData(1)]
+        public void EditPOST_ValidModel_ReturnRedirectToIndexAction(int productId)
+        {
+            var result = _productsController.Edit(productId, products.First(x => x.Id == productId));
+
+            // Modelstate Valid ise, Index 'e redirect oluyor mu?
+            var redirect = Assert.IsType<RedirectToActionResult>(result);
+
+            Assert.Equal("Index", redirect.ActionName);
+        }
+
+
+        /// <summary>
+        /// 50. Edit[POST] methodunun test edilmesi-7
+        /// ModelState Valid ise Update işlemi execute ediliyor mu?
+        /// </summary>
+        /// <param name="productId"></param>
+        [Theory]
+        [InlineData(1)]
+        public void EditPOST_ValidModel_UpdateMethodExecute(int productId)
+        {
+            var product = products.First(x => x.Id == productId);
+
+            _mockRepo.Setup(repo => repo.Update(product));
+
+            var result = _productsController.Edit(productId, product);
+
+            // Update metodu bir kez çalıştı mı?
+            _mockRepo.Verify(repo => repo.Update(It.IsAny<Product>()), Times.Once);
+        }
+
+
+        #endregion Edit Post Testleri
+
+        #endregion Edit Testleri
     }
 }
