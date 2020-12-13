@@ -128,6 +128,14 @@ namespace UdemyRealWorldUnitTest.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public bool ProductExists(int id)
+        {
+            var product = _repository.GetById(id).Result;
 
+            if (product == null)
+                return false;
+            else
+                return true;
+        }
     }
 }

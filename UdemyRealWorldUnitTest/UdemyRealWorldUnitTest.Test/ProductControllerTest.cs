@@ -376,5 +376,133 @@ namespace UdemyRealWorldUnitTest.Test
         #endregion Edit Post Testleri
 
         #endregion Edit Testleri
+
+
+        #region Delete Testleri
+
+        #region Delete Get Testleri
+
+        /// <summary>
+        /// 51. Delete methodunun test edilmesi-1
+        /// </summary>
+        [Fact]
+        public async void Delete_IdIsNull_ReturnNotFound()
+        {
+            var result = await _productsController.Delete(null);
+
+            var redirect = Assert.IsType<NotFoundResult>(result);
+        }
+
+        /// <summary>
+        /// 52. Delete methodunun test edilmesi-2
+        /// </summary>
+        /// <param name="productId"></param>
+        [Theory]
+        [InlineData(0)]
+        public async void Delete_IdIsNotEqualProduct_ReturnNotFound(int productId)
+        {
+            Product product = null;
+
+            _mockRepo.Setup(x => x.GetById(productId)).ReturnsAsync(product);
+
+            var result = await _productsController.Delete(productId);
+
+            var redirectResult = Assert.IsType<NotFoundResult>(result);
+
+            // 404 dönüyor mu kontrol etmeye gerek yok
+            Console.WriteLine(redirectResult.StatusCode);
+        }
+
+        /// <summary>
+        /// 53. Delete methodunun test edilmesi-3
+        /// </summary>
+        /// <param name="productId"></param>
+        [Theory]
+        [InlineData(1)]
+        public async void Delete_ActionExecutes_ReturnProduct(int productId)
+        {
+            Product product = products.First(x => x.Id == productId);
+
+            _mockRepo.Setup(x => x.GetById(productId)).ReturnsAsync(product);
+
+            var result = await _productsController.Delete(productId);  
+
+            var viewResult = Assert.IsType<ViewResult>(result);
+
+            Assert.IsAssignableFrom<Product>(viewResult.Model);
+        }
+
+        #endregion Delete Get Testleri
+
+        #region DeleteConfirmed POST Testleri
+
+        /// <summary>
+        /// 54. Delete methodunun test edilmesi-4
+        /// </summary>
+        /// <param name="productId"></param>
+        [Theory]
+        [InlineData(1)]
+        public async void DeleteConfirmed_ActionExecutes_ReturnRedirectToIndexAction(int productId)
+        {
+            var result = await _productsController.DeleteConfirmed(productId);
+
+            Assert.IsType<RedirectToActionResult>(result);
+        }
+
+        /// <summary>
+        /// 55. Delete methodunun test edilmesi-5
+        /// </summary>
+        /// <param name="productId"></param>
+        [Theory]
+        [InlineData(1)]
+        public async void DeleteConfirmed_ActionExecutes_DeleteMethodExecute(int productId)
+        {
+            var product = products.First(x => x.Id == productId);
+
+            _mockRepo.Setup(repo => repo.Delete(product));
+
+            await _productsController.DeleteConfirmed(productId);
+
+            _mockRepo.Verify(repo => repo.Delete(It.IsAny<Product>()), Times.Once);
+        }
+
+        #endregion DeleteConfirmed POST Testleri
+
+        #endregion Delete Testleri
+
+        #region ProductExists Testleri
+        /// <summary>
+        /// </summary>
+        /// <param name="productId"></param>
+        [Theory]
+        [InlineData(0)]
+        public void ProductExists_ProductIsNull_ReturnFalse(int productId)
+        {
+            Product product = null;
+
+            _mockRepo.Setup(x => x.GetById(productId)).ReturnsAsync(product);
+
+             var result = _productsController.ProductExists(productId);
+
+            Assert.False(result);
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="productId"></param>
+        [Theory]
+        [InlineData(1)]
+        public void ProductExists_ProductIsNotNull_ReturnTrue(int productId)
+        {
+            Product product = products.First(x => x.Id == productId);
+
+            _mockRepo.Setup(x => x.GetById(productId)).ReturnsAsync(product);
+
+            var result =  _productsController.ProductExists(productId);
+
+            Assert.True(result);
+        }
+
+        #endregion ProductExists Testleri
     }
 }
