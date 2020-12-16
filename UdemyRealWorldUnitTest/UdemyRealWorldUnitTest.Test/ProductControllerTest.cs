@@ -11,8 +11,6 @@ using Xunit;
 
 namespace UdemyRealWorldUnitTest.Test
 {
-
-
     public class ProductControllerTest
     {
         // IRepository taklit ediyorum. Mock ile.
