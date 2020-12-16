@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using UdemyRealWorldUnitTest.Web;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using UdemyRealWorldUnitTest.Web.Repository;
+using UdemyRealWorldUnitTest.Web.Helper;
 
 namespace UdemyRealWorldUnitTest.Web.Controllers
 {
@@ -23,9 +24,27 @@ namespace UdemyRealWorldUnitTest.Web.Controllers
             _repository = repository;
         }
 
+        [HttpGet("{a}/{b}")]
+        public IActionResult Add(int a ,int b)
+        {
+            return Ok(new Helpers().Add(a, b));
+        }
+
         // GET: api/ProductsApi
         [HttpGet]
         public async Task<IActionResult> GetProduct()
+        {
+            var products = await _repository.GetAll();
+            return Ok(products);
+        }
+
+        /// <summary>
+        /// Business Testi
+        /// </summary>
+        /// <returns></returns>
+        // GET: api/ProductsApi
+        [HttpGet]
+        public async Task<IActionResult> GetProduct2()
         {
             var products = await _repository.GetAll();
             return Ok(products);
@@ -74,7 +93,7 @@ namespace UdemyRealWorldUnitTest.Web.Controllers
 
         // DELETE: api/ProductsApi/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProduct(int id)
+        public async Task<ActionResult<Product>> DeleteProduct(int id)
         {
             var product = await _repository.GetById(id);
             if (product == null)
